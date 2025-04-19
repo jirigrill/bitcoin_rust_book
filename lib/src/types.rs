@@ -1,14 +1,21 @@
+use crate::crypto::{PublicKey, Signature};
 use crate::U256;
 use chrono::{DateTime, Utc};
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Blockchain {
     pub blocks: Vec<Block>,
 }
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Block {
     pub header: BlockHeader,
     pub transactions: Vec<Transaction>,
 }
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct BlockHeader {
     /// Timestamp of the block
     pub timestamp: DateTime<Utc>,
@@ -21,19 +28,24 @@ pub struct BlockHeader {
     /// target - has to be higher than hash of this block
     pub target: U256,
 }
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Transaction {
     pub inputs: Vec<TransactionInput>,
     pub outputs: Vec<TransactionOutput>,
 }
 
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct TransactionInput {
     pub prev_transaction_ouptut_hash: [u8; 32],
-    pub signature: [u8; 64],
+    pub signature: Signature,
 }
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct TransactionOutput {
     pub value: u64,
     pub unique_id: Uuid,
-    pub pubkey: [u8; 32],
+    pub pubkey: PublicKey,
 }
 
 impl Blockchain {

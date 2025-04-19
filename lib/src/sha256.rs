@@ -1,8 +1,8 @@
-use primitive_types::U256;
-use serde::Serialize;
+use crate::U256;
+use serde::{Deserialize, Serialize};
 use sha256::digest;
 use std::fmt;
-#[derive(Clone, Copy, Serialize)]
+#[derive(Clone, Copy, Serialize, Deserialize, Debug, PartialEq, Eq)]
 pub struct Hash(U256);
 
 impl fmt::Display for Hash {
@@ -26,7 +26,7 @@ impl Hash {
         let hash = digest(&serialized);
         let hash_bytes = hex::decode(hash).unwrap();
         let hash_array: [u8; 32] = hash_bytes.as_slice().try_into().unwrap();
-        Hash(U256::from_big_endian(&hash_array))
+        Hash(U256::from(hash_array))
     }
 
     // check if a hash matches a target
