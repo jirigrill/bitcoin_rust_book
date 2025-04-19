@@ -1,13 +1,20 @@
 use primitive_types::U256;
 use serde::Serialize;
 use sha256::digest;
+use std::fmt;
 #[derive(Clone, Copy, Serialize)]
 pub struct Hash(U256);
+
+impl fmt::Display for Hash {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:?}", self.0)
+    }
+}
 
 impl Hash {
     // hash anything that can be serde Serialized via ciborium
     #[allow(clippy::self_named_constructors)]
-    pub fn hash<T: Serialize>(data: &T) -> Self {
+    pub fn hash<T: serde::Serialize>(data: &T) -> Self {
         let mut serialized: Vec<u8> = vec![];
         if let Err(e) = ciborium::into_writer(data, &mut serialized) {
             panic!(
