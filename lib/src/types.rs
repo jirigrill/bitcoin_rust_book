@@ -1,4 +1,6 @@
 use crate::crypto::{PublicKey, Signature};
+use crate::sha256::Hash;
+use crate::util::MerkleRoot;
 use crate::U256;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
@@ -22,9 +24,9 @@ pub struct BlockHeader {
     /// Nonce used to mine the block
     pub nonce: u64,
     /// Hash of the previous block
-    pub prev_block_hash: [u8; 32],
+    pub prev_block_hash: Hash,
     /// Merkle root of the block's transactions
-    pub merkle_root: [u8; 32],
+    pub merkle_root: MerkleRoot,
     /// target - has to be higher than hash of this block
     pub target: U256,
 }
@@ -37,7 +39,7 @@ pub struct Transaction {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct TransactionInput {
-    pub prev_transaction_ouptut_hash: [u8; 32],
+    pub prev_transaction_ouptut_hash: Hash,
     pub signature: Signature,
 }
 
@@ -46,6 +48,12 @@ pub struct TransactionOutput {
     pub value: u64,
     pub unique_id: Uuid,
     pub pubkey: PublicKey,
+}
+
+impl TransactionOutput {
+    pub fn hash(&self) -> Hash {
+        Hash::hash(self)
+    }
 }
 
 impl Blockchain {
@@ -65,8 +73,8 @@ impl Block {
         }
     }
 
-    pub fn hash(&self) -> ! {
-        unimplemented!()
+    pub fn hash(&self) -> Hash {
+        Hash::hash(self)
     }
 }
 
@@ -74,8 +82,8 @@ impl BlockHeader {
     pub fn new(
         timestamp: DateTime<Utc>,
         nonce: u64,
-        prev_block_hash: [u8; 32],
-        merkle_root: [u8; 32],
+        prev_block_hash: Hash,
+        merkle_root: MerkleRoot,
         target: U256,
     ) -> Self {
         BlockHeader {
@@ -87,8 +95,8 @@ impl BlockHeader {
         }
     }
 
-    pub fn hash(&self) -> ! {
-        unimplemented!()
+    pub fn hash(&self) -> Hash {
+        Hash::hash(self)
     }
 }
 
@@ -97,7 +105,7 @@ impl Transaction {
         Transaction { inputs, outputs }
     }
 
-    pub fn hash(&self) -> ! {
-        unimplemented!()
+    pub fn hash(&self) -> Hash {
+        Hash::hash(self)
     }
 }
